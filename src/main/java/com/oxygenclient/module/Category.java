@@ -1,13 +1,12 @@
 package com.oxygenclient.module;
 
 public enum Category {
-    COMBAT("§cCombat"),
-    MOVEMENT("§bMovement"),
-    RENDER("§dRender"),
-    PLAYER("§ePlayer"),
-    WORLD("§aWorld");
+    COMBAT("Combat"),
+    MOVEMENT("Movement"),
+    RENDER("Render"),
+    WORLD("World");
 
     private final String name;
-    Category(String name) { this.name = name; }
+    Category(String n) { name = n; }
     public String getName() { return name; }
 }
