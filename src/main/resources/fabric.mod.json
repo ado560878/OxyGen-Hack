@@ -1,46 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "oxygen-mod",
+  "id": "oxygen-client",
   "version": "${project.version}",
-  "name": "⚡ OxyGen Mod",
-  "description": "Right Shift: Maden Menüsü | R: Arkadan Saldırı | V: Maden Tara",
-  "authors": [
-    "OxyGen Team"
-  ],
-  "contact": {
-    "homepage": "https://github.com/yourname/oxygen-mod",
-    "sources": "https://github.com/yourname/oxygen-mod",
-    "issues": "https://github.com/yourname/oxygen-mod/issues"
-  },
+  "name": "⚡ OxyGen Hack Client",
+  "description": "Ultimate Hack Client - KillAura, XRay, ESP, Fly, Speed, NoFall & more!",
+  "authors": ["OxyGen Team"],
   "license": "MIT",
-  "icon": "assets/oxygen-mod/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "com.oxygenmod.OxygenMod"
-    ],
-    "client": [
-      "com.oxygenmod.client.OxygenModClient"
-    ]
+    "client": ["com.oxygenclient.OxygenClient"]
   },
-  "mixins": [
-    "oxygen-mod.mixins.json"
-  ],
+  "mixins": ["oxygen-client.mixins.json"],
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": "~1.21.4",
-    "java": ">=21",
-    "fabric-api": "*"
-  },
-  "suggests": {
-    "modmenu": "*"
-  },
-  "custom": {
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/oxygen"
-      },
-      "update_checker": true
-    }
+    "java": ">=21"
   }
 }
