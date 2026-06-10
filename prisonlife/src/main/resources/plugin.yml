@@ -1,0 +1,19 @@
+name: PrisonLife
+version: 1.0.0
+main: com.prisonlife.PrisonLifePlugin
+api-version: '1.21'
+description: Roblox Prison Life inspired prison roleplay plugin
+author: AdoLife
+softdepend: [SkinsRestorer]
+commands:
+  pb:
+    description: PrisonLife ana komutu
+    usage: /pb join
+  setspawn:
+    description: Takim spawn noktasi ayarla
+    usage: /setspawn <mahkum|gardiyan>
+    permission: prisonlife.setspawn
+permissions:
+  prisonlife.setspawn:
+    description: Spawn ayarlama yetkisi
+    default: op

@@ -1,0 +1,33 @@
+# PrisonLife Ayarlari
+prefix: "&7[&6PrisonLife&7] "
+
+skins:
+  # SkinsRestorer ile uygulanir: skin set <skin> <oyuncu>
+  mahkum: "Prisonnier"
+  gardiyan: "PoliceOfficer_"
+
+handcuff:
+  # Kelepce suresi (saniye) - sure sonunda mahkum spawn'ina isinlanir
+  freeze-seconds: 3
+
+shock:
+  # Sok cihazi efekt suresi (saniye)
+  duration-seconds: 5
+
+messages:
+  joined-mahkum: "&aMahkum takimina katildin!"
+  joined-gardiyan: "&9Gardiyan takimina katildin!"
+  already-in-team: "&cZaten bu takimdasin!"
+  spawn-set: "&a%team% spawn noktasi ayarlandi!"
+  spawn-not-set: "&cSpawn noktasi henuz ayarlanmamis! (/setspawn mahkum|gardiyan)"
+  handcuffed: "&cKelepcelendin! 3 saniye sonra hucrene isinlanacaksin."
+  handcuff-used: "&a%player% adli oyuncuyu kelepceledin!"
+  shocked: "&cSok cihazi ile vuruldun!"
+  shock-used: "&a%player% adli oyuncuya sok uyguladin!"
+  friendly-fire: "&cTakim arkadasina vuramazsin!"
+  no-permission: "&cBu komutu kullanma yetkin yok!"
+  only-players: "&cBu komut sadece oyuncular icin!"
+  cannot-move: "&cKelepcelisin, hareket edemezsin!"
+
+# Spawn noktalari /setspawn ile otomatik kaydedilir
+spawns: {}
