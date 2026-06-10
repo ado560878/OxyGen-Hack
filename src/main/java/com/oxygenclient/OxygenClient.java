@@ -13,19 +13,16 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class OxygenClient implements ClientModInitializer {
-    public static final String NAME = "OxyGen Client";
     public static final String VERSION = "3.0.0";
     public static ModuleManager moduleManager;
     private static KeyBinding guiKey;
+    private static HUD hud;
 
     @Override
     public void onInitializeClient() {
-        System.out.println("[OxyGen] Starting " + NAME + " v" + VERSION);
-        
         moduleManager = new ModuleManager();
-        HUD hud = new HUD();
+        hud = new HUD();
         
-        // Key binding: RIGHT SHIFT
         guiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.oxygen-client.gui",
             InputUtil.Type.KEYSYM,
@@ -33,7 +30,6 @@ public class OxygenClient implements ClientModInitializer {
             "category.oxygen-client"
         ));
         
-        // Tick event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             moduleManager.onTick();
             while (guiKey.wasPressed()) {
@@ -41,12 +37,10 @@ public class OxygenClient implements ClientModInitializer {
             }
         });
         
-        // HUD render
-        HudRenderCallback.EVENT.register((ctx, delta) -> {
-            hud.render(ctx, delta);
+        HudRenderCallback.EVENT.register((ctx, counter) -> {
+            hud.render(ctx, counter.getTickDelta(false));
         });
         
-        System.out.println("[OxyGen] Loaded " + moduleManager.getModules().size() + " modules");
-        System.out.println("[OxyGen] Press RIGHT SHIFT to open GUI");
+        System.out.println("[OxyGen] v" + VERSION + " | " + moduleManager.getModules().size() + " modules");
     }
 }
