@@ -2,18 +2,41 @@
   "schemaVersion": 1,
   "id": "oxygen-client",
   "version": "${project.version}",
-  "name": "⚡ OxyGen Hack Client",
-  "description": "Ultimate Hack Client - KillAura, XRay, ESP, Fly, Speed, NoFall & more!",
-  "authors": ["OxyGen Team"],
+  "name": "⚡ OxyGen Client Ghost",
+  "description": "Undetectable Ghost Client - KillAura, XRay, ESP, Fly, Speed & more!\nGrimAC, NCP, AAC, Verus, Vulcan, Matrix BYPASS",
+  "authors": [
+    "OxyGen Team"
+  ],
+  "contact": {
+    "homepage": "https://github.com/oxygenclient/oxygen-client",
+    "sources": "https://github.com/oxygenclient/oxygen-client",
+    "issues": "https://github.com/oxygenclient/oxygen-client/issues"
+  },
   "license": "MIT",
+  "icon": "assets/oxygen-client/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["com.oxygenclient.OxygenClient"]
+    "client": [
+      "com.oxygenclient.OxygenClient"
+    ]
   },
-  "mixins": ["oxygen-client.mixins.json"],
+  "mixins": [
+    "oxygen-client.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": "~1.21.4",
     "java": ">=21"
+  },
+  "breaks": {
+    "optifabric": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/oxygen"
+      },
+      "badges": ["library"]
+    }
   }
 }
