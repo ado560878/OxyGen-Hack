@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.oxygenclient.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MinecraftClientMixin",
+    "WorldRendererMixin",
+    "BlockMixin"
+  ],
+  "mixins": [
+    "PlayerEntityMixin",
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
