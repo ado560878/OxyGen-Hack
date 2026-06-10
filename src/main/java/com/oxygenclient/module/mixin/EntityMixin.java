@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public class EntityMixin {
     @Inject(method = "isPushable", at = @At("RETURN"), cancellable = true)
-    private void onIsPushable(CallbackInfoReturnable<Boolean> cir) {
-        Module v = OxygenClient.moduleManager.getModules().stream()
-            .filter(m -> m.getName().equals("Velocity")).findFirst().orElse(null);
-        if (v != null && v.isEnabled()) cir.setReturnValue(false);
+    private void isPushable(CallbackInfoReturnable<Boolean> c) {
+        if (OxygenClient.moduleManager == null) return;
+        Module v = OxygenClient.moduleManager.getModules().stream().filter(m -> m.getName().equals("Velocity")).findFirst().orElse(null);
+        if (v != null && v.isEnabled()) c.setReturnValue(false);
     }
 }
