@@ -40,7 +40,6 @@ public class ModuleManager {
     }
 
     private void add(Module m) { modules.add(m); }
-
     public List<Module> getModules() { return modules; }
     
     public List<Module> getByCategory(Category c) {
