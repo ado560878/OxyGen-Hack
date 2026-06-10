@@ -5,7 +5,7 @@ import com.oxygenclient.module.Module;
 
 public class NoFall extends Module {
     public NoFall() {
-        super("NoFall", "No fall damage", Category.MOVEMENT);
+        super("NoFall", Category.MOVEMENT);
     }
 
     @Override
