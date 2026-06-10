@@ -1,11 +1,6 @@
-name: Build OxyGen Client
+name: Build OxyGen Ghost Client
 
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
-  release:
-    types: [created]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -20,9 +15,5 @@ jobs:
     - run: mvn clean package -DskipTests
     - uses: actions/upload-artifact@v4
       with:
-        name: OxygenClient
-        path: target/*.jar
-    - if: github.event_name == 'release'
-      uses: softprops/action-gh-release@v1
-      with:
-        files: target/*.jar
+        name: OxygenClient-Ghost
+        path: target/OxygenClient-Ghost-*.jar
