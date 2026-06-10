@@ -2,20 +2,16 @@ package com.oxygenclient.module.movement;
 
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
-import net.minecraft.util.math.Vec3d;
 
 public class Speed extends Module {
     public Speed() {
-        super("Speed", "Move faster", Category.MOVEMENT);
+        super("Speed", Category.MOVEMENT);
     }
 
     @Override
     public void onTick() {
-        if (mc.player == null || !mc.player.isOnGround()) return;
-        Vec3d v = mc.player.getVelocity();
-        double yaw = Math.toRadians(mc.player.getYaw());
-        if (mc.player.forwardSpeed > 0) {
-            mc.player.setVelocity(-Math.sin(yaw) * 0.3, v.y, Math.cos(yaw) * 0.3);
-        }
+        if (mc.player == null || !mc.player.isOnGround() || mc.player.forwardSpeed <= 0) return;
+        double y = Math.toRadians(mc.player.getYaw());
+        mc.player.setVelocity(-Math.sin(y) * 0.3, mc.player.getVelocity().y, Math.cos(y) * 0.3);
     }
 }
