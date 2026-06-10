@@ -1,4 +1,4 @@
-name: Build OxyGen Ghost Client
+name: Build OxyGen Client
 
 on: [push, workflow_dispatch]
 
@@ -11,9 +11,10 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
-        cache: maven
-    - run: mvn clean package -DskipTests
+    - uses: gradle/actions/setup-gradle@v3
+    - run: chmod +x ./gradlew
+    - run: ./gradlew build --no-daemon
     - uses: actions/upload-artifact@v4
       with:
         name: OxygenClient-Ghost
-        path: target/OxygenClient-Ghost-*.jar
+        path: build/libs/*.jar
