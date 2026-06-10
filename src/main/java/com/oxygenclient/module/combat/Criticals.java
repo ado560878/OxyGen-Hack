@@ -5,7 +5,7 @@ import com.oxygenclient.module.Module;
 
 public class Criticals extends Module {
     public Criticals() {
-        super("Criticals", "Always critical hit", Category.COMBAT);
+        super("Criticals", Category.COMBAT);
     }
 
     @Override
