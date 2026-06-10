@@ -16,31 +16,15 @@ public class SilentAim extends Module {
     @Override
     public void onTick() {
         if (mc.player == null || !mc.options.attackKey.isPressed()) return;
-
-        Box box = new Box(
-            mc.player.getX() - 6, mc.player.getY() - 6, mc.player.getZ() - 6,
-            mc.player.getX() + 6, mc.player.getY() + 6, mc.player.getZ() + 6
-        );
-
-        List<Entity> targets = mc.world.getOtherEntities(mc.player, box,
-            e -> e instanceof PlayerEntity && e.isAlive());
+        Box box = new Box(mc.player.getX()-6, mc.player.getY()-6, mc.player.getZ()-6, mc.player.getX()+6, mc.player.getY()+6, mc.player.getZ()+6);
+        List<Entity> targets = mc.world.getOtherEntities(mc.player, box, e -> e instanceof PlayerEntity && e.isAlive());
         if (targets.isEmpty()) return;
-
-        Entity t = targets.stream()
-            .min(Comparator.comparingDouble(e -> e.distanceTo(mc.player)))
-            .orElse(null);
-
+        Entity t = targets.stream().min(Comparator.comparingDouble(e -> e.distanceTo(mc.player))).orElse(null);
         if (t != null) {
-            double dx = t.getX() - mc.player.getX();
-            double dy = t.getEyeY() - mc.player.getEyeY();
-            double dz = t.getZ() - mc.player.getZ();
-            double dist = Math.sqrt(dx * dx + dz * dz);
-            
-            float yaw = (float)(MathHelper.atan2(dz, dx) * 180.0 / Math.PI) - 90f;
-            float pitch = (float)(-MathHelper.atan2(dy, dist) * 180.0 / Math.PI);
-            
-            mc.player.setYaw(yaw + AntiCheatBypass.getRandomYawOffset());
-            mc.player.setPitch(pitch + AntiCheatBypass.getRandomPitchOffset());
+            double dx = t.getX()-mc.player.getX(), dy = t.getEyeY()-mc.player.getEyeY(), dz = t.getZ()-mc.player.getZ();
+            double dist = Math.sqrt(dx*dx+dz*dz);
+            mc.player.setYaw((float)(MathHelper.atan2(dz,dx)*180/Math.PI)-90f + AntiCheatBypass.getRandomYawOffset());
+            mc.player.setPitch((float)(-MathHelper.atan2(dy,dist)*180/Math.PI) + AntiCheatBypass.getRandomPitchOffset());
         }
     }
 }
