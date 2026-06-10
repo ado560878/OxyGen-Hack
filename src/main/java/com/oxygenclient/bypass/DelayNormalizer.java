@@ -4,56 +4,31 @@ import java.util.Random;
 
 public class DelayNormalizer {
     private static final Random random = new Random();
-    private static long lastAttackTime = 0;
-    private static long lastPacketTime = 0;
-    private static int consecutiveAttacks = 0;
-    
-    // İnsan gibi değişken saldırı aralığı
+    private static long lastAttack = 0;
+    private static long lastPacket = 0;
+    private static int hits = 0;
+
     public static long getAttackDelay(int cps) {
-        long currentTime = System.currentTimeMillis();
-        long baseDelay = 1000 / cps;
-        
-        // %20 rastgele sapma
-        long randomOffset = (long)(baseDelay * (random.nextDouble() - 0.5) * 0.4);
-        
-        // Çok hızlı saldırıları engelle
-        if (consecutiveAttacks > 5) {
-            baseDelay += 50; // Yorgunluk simülasyonu
-        }
-        
-        long actualDelay = baseDelay + randomOffset;
-        long timeSinceLastAttack = currentTime - lastAttackTime;
-        
-        if (timeSinceLastAttack < actualDelay) {
-            return actualDelay - timeSinceLastAttack;
-        }
-        
-        lastAttackTime = currentTime;
-        consecutiveAttacks++;
+        long now = System.currentTimeMillis();
+        long base = 1000 / cps;
+        long offset = (long)(base * (random.nextDouble() - 0.5) * 0.4);
+        if (hits > 5) base += 50;
+        long delay = base + offset;
+        long since = now - lastAttack;
+        if (since < delay) return delay - since;
+        lastAttack = now;
+        hits++;
         return 0;
     }
 
-    // Packet rate limiter
     public static boolean canSendPacket() {
-        long currentTime = System.currentTimeMillis();
-        long minDelay = AntiCheatBypass.getPacketDelay();
-        
-        if (currentTime - lastPacketTime < minDelay) {
-            return false;
-        }
-        
-        lastPacketTime = currentTime;
+        long now = System.currentTimeMillis();
+        if (now - lastPacket < 50 + random.nextInt(50)) return false;
+        lastPacket = now;
         return true;
     }
 
-    // Uzun süreli pattern'leri kır
     public static void resetPattern() {
-        consecutiveAttacks = random.nextInt(3);
-    }
-
-    // GrimAC transaction bypass
-    public static boolean shouldSkipTransaction() {
-        // Her 8 transaction'dan 1'ini atla
-        return random.nextInt(8) == 0;
+        hits = random.nextInt(3);
     }
 }
