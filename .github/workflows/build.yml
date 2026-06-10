@@ -1,6 +1,9 @@
 name: Build OxyGen Client
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,7 +25,7 @@ jobs:
     - name: Generate Gradle Wrapper
       run: gradle wrapper
     
-    - name: Build
+    - name: Build with Gradle
       run: gradle build --no-daemon
     
     - name: Upload Artifact
