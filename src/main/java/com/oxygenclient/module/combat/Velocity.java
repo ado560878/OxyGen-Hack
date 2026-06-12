@@ -1,4 +1,4 @@
-üpackage com.oxygenclient.module.combat;
+package com.oxygenclient.module.combat;
 
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
