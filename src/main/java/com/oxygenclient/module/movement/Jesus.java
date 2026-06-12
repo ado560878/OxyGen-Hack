@@ -5,7 +5,7 @@ import com.oxygenclient.module.Module;
 
 public class Jesus extends Module {
     public Jesus() {
-        super("Jesus", Category.MOVEMENT);
+        super("Jesus", "Walk on water", Category.MOVEMENT);
     }
 
     @Override
