@@ -3,7 +3,7 @@ package com.oxygenclient.module;
 import com.oxygenclient.module.combat.*;
 import com.oxygenclient.module.movement.*;
 import com.oxygenclient.module.render.*;
-import com.oxygenclient.module.misc.*;
+import com.oxygenclient.module.world.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,24 +11,20 @@ public class ModuleManager {
     private final List<Module> modules = new ArrayList<>();
 
     public ModuleManager() {
-        add(new KillAuraGhost());
+        add(new KillAura());
         add(new SilentAim());
         add(new AutoClicker());
         add(new Reach());
         add(new Velocity());
-        add(new HitBox());
         add(new Criticals());
         add(new Speed());
         add(new Fly());
         add(new NoFall());
         add(new Sprint());
-        add(new Step());
         add(new Jesus());
         add(new XRay());
         add(new ESP());
         add(new Fullbright());
-        add(new Tracers());
-        add(new ChestESP());
         add(new Disabler());
     }
 
