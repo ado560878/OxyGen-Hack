@@ -27,7 +27,7 @@ public abstract class Module {
         enabled = !enabled;
         if (enabled) onEnable(); else onDisable();
         if (mc.player != null) {
-            String msg = enabled ? "§a" + name + " §aenabled" : "§c" + name + " §cdisabled";
+            String msg = enabled ? "§a✔ " + name + " §aON" : "§c✘ " + name + " §cOFF";
             mc.player.sendMessage(Text.literal(msg), true);
         }
     }
