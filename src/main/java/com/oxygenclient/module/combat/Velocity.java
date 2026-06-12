@@ -1,10 +1,10 @@
-package com.oxygenclient.module.combat;
+üpackage com.oxygenclient.module.combat;
 
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
 
 public class Velocity extends Module {
     public Velocity() {
-        super("Velocity", Category.COMBAT);
+        super("Velocity", "No knockback", Category.COMBAT);
     }
 }
