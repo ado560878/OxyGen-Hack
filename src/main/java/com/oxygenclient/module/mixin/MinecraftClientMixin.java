@@ -24,7 +24,7 @@ public class MinecraftClientMixin {
         long win = mc.getWindow().getHandle();
         boolean pressed = GLFW.glfwGetKey(win, GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
         
-        if (pressed && !keyDown && mc.currentScreen == null) {
+        if (pressed && !keyDown && mc.currentScreen == null && mc.player != null) {
             mc.setScreen(new ClickGUI());
         }
         keyDown = pressed;
