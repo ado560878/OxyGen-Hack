@@ -5,6 +5,6 @@ import com.oxygenclient.module.Module;
 
 public class HitBox extends Module {
     public HitBox() {
-        super("HitBox", Category.COMBAT);
+        super("HitBox", "Expanded hitboxes", Category.COMBAT);
     }
 }
