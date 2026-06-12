@@ -5,13 +5,9 @@ import com.oxygenclient.module.Module;
 
 public class Criticals extends Module {
     public Criticals() {
-        super("Criticals", Category.COMBAT);
+        super("Criticals", "1.21 style critical hits when combo with KillAura", Category.COMBAT);
     }
 
-    @Override
-    public void onTick() {
-        if (mc.player != null && mc.player.isOnGround() && mc.options.attackKey.isPressed()) {
-            mc.player.jump();
-        }
-    }
+    // KillAura kontrol eder, burada ek işlem yok
+    // Sadece toggle durumunu bildirir
 }
