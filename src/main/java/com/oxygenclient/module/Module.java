@@ -1,6 +1,7 @@
 package com.oxygenclient.module;
 
 import com.oxygenclient.module.settings.Setting;
+import com.oxygenclient.ui.NotificationManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import java.util.ArrayList;
@@ -26,10 +27,17 @@ public abstract class Module {
     public void toggle() {
         enabled = !enabled;
         if (enabled) onEnable(); else onDisable();
+        
+        // Chat mesajı
         if (mc.player != null) {
-            String msg = enabled ? "§a✔ " + name + " §aON" : "§c✘ " + name + " §cOFF";
+            String msg = enabled ? "§a✔ " + name + " §aenabled" : "§c✘ " + name + " §cdisabled";
             mc.player.sendMessage(Text.literal(msg), true);
         }
+        
+        // Popup bildirim
+        NotificationManager.getInstance().addNotification(
+            (enabled ? "§a" : "§c") + name + (enabled ? " enabled" : " disabled")
+        );
     }
 
     protected void addSetting(Setting setting) { settings.add(setting); }
