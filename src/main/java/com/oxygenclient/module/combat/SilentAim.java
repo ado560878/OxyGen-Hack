@@ -1,8 +1,8 @@
 package com.oxygenclient.module.combat;
 
-import com.oxygenclient.bypass.AntiCheatBypass;
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
+import com.oxygenclient.module.settings.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
@@ -11,20 +11,31 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SilentAim extends Module {
-    public SilentAim() { super("SilentAim", Category.COMBAT); }
+    private final NumberSetting range = new NumberSetting("Range", "Aim range", 6.0, 1.0, 10.0, 0.1);
+
+    public SilentAim() {
+        super("SilentAim", "Aim without moving screen", Category.COMBAT);
+        addSetting(range);
+    }
 
     @Override
     public void onTick() {
         if (mc.player == null || !mc.options.attackKey.isPressed()) return;
-        Box box = new Box(mc.player.getX()-6, mc.player.getY()-6, mc.player.getZ()-6, mc.player.getX()+6, mc.player.getY()+6, mc.player.getZ()+6);
-        List<Entity> targets = mc.world.getOtherEntities(mc.player, box, e -> e instanceof PlayerEntity && e.isAlive());
+
+        double r = range.getValue();
+        Box box = new Box(mc.player.getX()-r, mc.player.getY()-r, mc.player.getZ()-r,
+                          mc.player.getX()+r, mc.player.getY()+r, mc.player.getZ()+r);
+
+        List<Entity> targets = mc.world.getOtherEntities(mc.player, box,
+            e -> e instanceof PlayerEntity && e.isAlive());
         if (targets.isEmpty()) return;
+
         Entity t = targets.stream().min(Comparator.comparingDouble(e -> e.distanceTo(mc.player))).orElse(null);
         if (t != null) {
             double dx = t.getX()-mc.player.getX(), dy = t.getEyeY()-mc.player.getEyeY(), dz = t.getZ()-mc.player.getZ();
             double dist = Math.sqrt(dx*dx+dz*dz);
-            mc.player.setYaw((float)(MathHelper.atan2(dz,dx)*180/Math.PI)-90f + AntiCheatBypass.getRandomYawOffset());
-            mc.player.setPitch((float)(-MathHelper.atan2(dy,dist)*180/Math.PI) + AntiCheatBypass.getRandomPitchOffset());
+            mc.player.setYaw((float)(MathHelper.atan2(dz,dx)*180/Math.PI)-90f);
+            mc.player.setPitch((float)(-MathHelper.atan2(dy,dist)*180/Math.PI));
         }
     }
 }
