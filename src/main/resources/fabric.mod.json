@@ -1,19 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "oxygen-client",
-  "version": "${version}",
+  "version": "4.0.0",
   "name": "OxyGen Client",
-  "description": "Ghost Client - KillAura, XRay, ESP, Fly, Speed",
-  "authors": ["OxyGen Team"],
-  "license": "MIT",
-  "environment": "client",
-  "entrypoints": {
-    "client": ["com.oxygenclient.OxygenClient"]
-  },
+  "entrypoints": { "client": ["com.oxygenclient.OxygenClient"] },
   "mixins": ["oxygen-client.mixins.json"],
-  "depends": {
-    "fabricloader": ">=0.16.0",
-    "minecraft": "~1.21.4",
-    "java": ">=21"
-  }
+  "depends": { "fabricloader": ">=0.16.0", "minecraft": "~1.21.4", "java": ">=21" }
 }
