@@ -5,6 +5,6 @@ import com.oxygenclient.module.Module;
 
 public class Step extends Module {
     public Step() {
-        super("Step", Category.MOVEMENT);
+        super("Step", "Auto step blocks", Category.MOVEMENT);
     }
 }
