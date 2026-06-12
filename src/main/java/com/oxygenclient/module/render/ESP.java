@@ -5,6 +5,6 @@ import com.oxygenclient.module.Module;
 
 public class ESP extends Module {
     public ESP() {
-        super("ESP", Category.RENDER);
+        super("ESP", "See players through walls", Category.RENDER);
     }
 }
