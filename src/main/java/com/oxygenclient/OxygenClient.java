@@ -11,7 +11,7 @@ public class OxygenClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         moduleManager = new ModuleManager();
-        System.out.println("[" + NAME + "] v" + VERSION + " | " + 
-            moduleManager.getModules().size() + " modules loaded");
+        System.out.println("[" + NAME + "] v" + VERSION + " loaded! " + 
+            moduleManager.getModules().size() + " modules");
     }
 }
