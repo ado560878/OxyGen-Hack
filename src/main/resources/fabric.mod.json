@@ -1,19 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "oxygen-client",
-  "version": "4.0.0",
+  "id": "oxygenclient",
+  "version": "${version}",
   "name": "OxyGen Client",
-  "description": "Ghost client for Minecraft 1.21.4",
+  "description": "Advanced Ghost Client for Minecraft",
   "authors": ["OxyGen Team"],
-  "license": "MIT",
+  "contact": {},
+  "license": "All Rights Reserved",
+  "icon": "assets/oxygenclient/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["com.oxygenclient.OxygenClient"]
+    "main": [
+      "com.oxygenclient.OxygenClient"
+    ]
   },
-  "mixins": ["oxygen-client.mixins.json"],
+  "mixins": [
+    "oxygen-client.mixins.json"
+  ],
   "depends": {
-    "fabricloader": ">=0.16.0",
-    "minecraft": "~1.21.4",
+    "fabricloader": ">=0.16.9",
+    "minecraft": ">=1.21.4",
     "java": ">=21"
   }
 }
