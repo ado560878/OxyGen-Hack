@@ -35,13 +35,11 @@ public class BlockRenderMixin {
     ));
     
     @Inject(method = "renderBlock", at = @At("HEAD"), cancellable = true)
-    private void onRenderBlock(BlockState state, BlockPos pos, BlockRenderView world, MatrixStack matrices,
-                               VertexConsumerProvider vertexConsumers, boolean cull, CallbackInfo ci) {
+    private void renderBlock(BlockState state, BlockPos pos, BlockRenderView world, MatrixStack matrices,
+                             VertexConsumerProvider vertexConsumers, boolean cull, CallbackInfo ci) {
         
-        if (XRay.isXRayEnabled()) {
-            if (!ORES.contains(state.getBlock())) {
-                ci.cancel();
-            }
+        if (XRay.isEnabled() && !ORES.contains(state.getBlock())) {
+            ci.cancel();
         }
     }
 }
