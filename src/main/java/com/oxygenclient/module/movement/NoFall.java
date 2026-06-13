@@ -13,7 +13,7 @@ public class NoFall extends Module {
     public void onTick() {
         if (mc.player == null || mc.getNetworkHandler() == null) return;
         if (mc.player.fallDistance > 2f) {
-            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, mc.player.horizontalCollision));
             mc.player.fallDistance = 0;
         }
     }
