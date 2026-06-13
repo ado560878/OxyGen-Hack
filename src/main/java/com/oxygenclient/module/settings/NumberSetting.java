@@ -7,7 +7,7 @@ public class NumberSetting extends Setting {
     private double increment;
     
     public NumberSetting(String name, String description, double defaultValue, double min, double max, double increment) {
-        super(name);
+        super(name, description);
         this.value = defaultValue;
         this.min = min;
         this.max = max;
