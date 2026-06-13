@@ -2,10 +2,11 @@
   "required": true,
   "package": "com.oxygenclient.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
-  "client": [
+  "mixins": [
     "MinecraftClientMixin",
     "BlockRenderMixin"
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
