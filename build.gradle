@@ -13,10 +13,15 @@ dependencies {
     minecraft "com.mojang:minecraft:1.21.4"
     mappings "net.fabricmc:yarn:1.21.4+build.1:v2"
     modImplementation "net.fabricmc:fabric-loader:0.16.9"
+    
+    // Fabric API gerekli
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.4+1.21.4"
 }
 
 loom {
-    mixin.defaultRefmapName = "oxygen-client.refmap.json"
+    mixin {
+        defaultRefmapName = "oxygen-client.refmap.json"
+    }
 }
 
 processResources {
@@ -39,11 +44,6 @@ java {
 jar {
     from sourceSets.main.output
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    
-    manifest {
-        attributes 'Main-Class': 'com.oxygenclient.OxygenClient'
-    }
-    
     archiveFileName = "OxyGen-Client-${version}.jar"
     destinationDirectory = file("${projectDir}")
 }
