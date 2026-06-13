@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Module {
-    protected String name;
-    protected String description;
-    protected Category category;
-    protected boolean enabled;
-    protected int key;
-    protected List<Setting> settings = new ArrayList<>();
+    private String name;
+    private String description;
+    private Category category;
+    private boolean enabled;
+    private int key;
+    private List<Setting> settings = new ArrayList<>();
     
     protected static MinecraftClient mc = MinecraftClient.getInstance();
     
@@ -30,8 +30,18 @@ public class Module {
     public void setKey(int key) { this.key = key; }
     public List<Setting> getSettings() { return settings; }
     
+    public void addSetting(Setting setting) {
+        settings.add(setting);
+    }
+    
+    public void addSettings(Setting... settings) {
+        for (Setting setting : settings) {
+            this.settings.add(setting);
+        }
+    }
+    
     public void toggle() {
-        enabled = !enabled;
+        this.enabled = !this.enabled;
         if (enabled) onEnable();
         else onDisable();
     }
@@ -41,14 +51,6 @@ public class Module {
     public void onTick() {}
     
     public String getDisplayValue() {
-        // KillAura için güç değeri göster
-        if (this.name.equals("KillAura")) {
-            for (Setting s : settings) {
-                if (s.getName().equals("Range")) {
-                    return ((com.oxygenclient.module.settings.NumberSetting)s).getValue() + "";
-                }
-            }
-        }
         return null;
     }
 }
