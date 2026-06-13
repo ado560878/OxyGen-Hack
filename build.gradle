@@ -1,22 +1,87 @@
 plugins {
     id 'fabric-loom' version '1.8.12'
+    id 'maven-publish'
 }
 
-version = '5.0.0'
-group = 'com.oxygenclient'
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "oxygenclient" {
+            sourceSet sourceSets.main
+        }
+    }
+}
 
 dependencies {
-    minecraft "com.mojang:minecraft:1.21.4"
-    mappings "net.fabricmc:yarn:1.21.4+build.1:v2"
-    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }
 
 processResources {
-    filesMatching("fabric.mod.json") { expand "version": project.version }
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
+    }
 }
 
-tasks.withType(JavaCompile).configureEach { it.options.release = 21 }
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
 jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes(
+            'Main-Class': 'com.oxygenclient.OxygenClient'
+        )
+    }
 }
+
+// Direkt JAR üretimi için
+build {
+    dependsOn jar
+}
+
+// JAR dosyasını doğrudan output olarak ver
+tasks.register('buildDirectJar') {
+    dependsOn jar
+    doLast {
+        copy {
+            from jar.archiveFile
+            into project.projectDir
+            rename { "${project.archives_base_name}-${project.version}.jar" }
+        }
+        println "JAR oluşturuldu: ${project.projectDir}/${project.archives_base_name}-${project.version}.jar"
+    }
+}
+
+build.finalizedBy(buildDirectJar)
