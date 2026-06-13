@@ -1,8 +1,9 @@
 package com.oxygenclient.module.settings;
 
-public abstract class Setting {
-    private final String name;
-    private final String description;
+public class Setting {
+    public String name;
+    public String description;
+    public boolean visible = true;
 
     public Setting(String name, String description) {
         this.name = name;
@@ -10,5 +11,4 @@ public abstract class Setting {
     }
 
     public String getName() { return name; }
-    public String getDescription() { return description; }
 }
