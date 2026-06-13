@@ -4,19 +4,19 @@ import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
 
 public class XRay extends Module {
-    private static boolean xrayEnabled = false;
+    private static boolean xrayActive = false;
     
     public XRay() {
         super("XRay", "See ores through walls", Category.RENDER);
     }
     
-    public static boolean isEnabled() {
-        return xrayEnabled;
+    public static boolean isXRayActive() {
+        return xrayActive;
     }
     
     @Override
     public void onEnable() {
-        xrayEnabled = true;
+        xrayActive = true;
         if (mc.worldRenderer != null) {
             mc.worldRenderer.reload();
         }
@@ -24,7 +24,7 @@ public class XRay extends Module {
     
     @Override
     public void onDisable() {
-        xrayEnabled = false;
+        xrayActive = false;
         if (mc.worldRenderer != null) {
             mc.worldRenderer.reload();
         }
