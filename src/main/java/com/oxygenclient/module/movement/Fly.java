@@ -5,7 +5,7 @@ import com.oxygenclient.module.Module;
 import com.oxygenclient.module.settings.NumberSetting;
 
 public class Fly extends Module {
-    private NumberSetting flySpeed = new NumberSetting("Speed", 1.0, 0.1, 5.0, 0.1);
+    private NumberSetting flySpeed = new NumberSetting("Speed", "Fly speed multiplier", 1.0, 0.1, 5.0, 0.1);
     
     public Fly() {
         super("Fly", "Allows you to fly", Category.MOVEMENT);
@@ -30,8 +30,7 @@ public class Fly extends Module {
     @Override
     public void onTick() {
         if (mc.player == null) return;
-        
-        mc.player.getAbilities().setFlySpeed(flySpeed.getValue() / 10.0f);
+        mc.player.getAbilities().setFlySpeed((float) (flySpeed.getValue() / 10.0f));
         mc.player.getAbilities().flying = true;
     }
 }
