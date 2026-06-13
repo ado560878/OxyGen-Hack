@@ -15,10 +15,6 @@ public class XRay extends Module {
         return instance;
     }
     
-    public boolean isXRayActive() {
-        return this.isEnabled();
-    }
-    
     @Override
     public void onEnable() {
         if (mc.worldRenderer != null) {
