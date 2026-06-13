@@ -31,7 +31,7 @@ public class ModuleManager {
     private void add(Module m) { modules.add(m); }
     public List<Module> getModules() { return modules; }
     public List<Module> getByCategory(Category c) {
-        return modules.stream().filter(m -> m.getCategory() == c).collect(Collectors.toList());
+        return modules.stream().filter(m -> m.category == c).collect(Collectors.toList());
     }
-    public void onTick() { modules.stream().filter(Module::isEnabled).forEach(Module::onTick); }
+    public void onTick() { modules.stream().filter(m -> m.enabled).forEach(Module::onTick); }
 }
