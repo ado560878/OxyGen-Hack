@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "BlockRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
