@@ -10,7 +10,7 @@ public class XRay extends Module {
         super("XRay", "See ores through walls", Category.RENDER);
     }
     
-    public static boolean isXRayEnabled() {
+    public static boolean isEnabled() {
         return xrayEnabled;
     }
     
