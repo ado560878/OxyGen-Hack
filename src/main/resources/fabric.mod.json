@@ -3,7 +3,17 @@
   "id": "oxygen-client",
   "version": "4.0.0",
   "name": "OxyGen Client",
-  "entrypoints": { "client": ["com.oxygenclient.OxygenClient"] },
+  "description": "Ghost client for Minecraft 1.21.4",
+  "authors": ["OxyGen Team"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.oxygenclient.OxygenClient"]
+  },
   "mixins": ["oxygen-client.mixins.json"],
-  "depends": { "fabricloader": ">=0.16.0", "minecraft": "~1.21.4", "java": ">=21" }
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21"
+  }
 }
