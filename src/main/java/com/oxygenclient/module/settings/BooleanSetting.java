@@ -2,15 +2,11 @@ package com.oxygenclient.module.settings;
 
 public class BooleanSetting extends Setting {
     private boolean value;
-    private final boolean defaultValue;
-
-    public BooleanSetting(String name, String description, boolean defaultValue) {
-        super(name, description);
-        this.value = defaultValue;
-        this.defaultValue = defaultValue;
+    public BooleanSetting(String name, String desc, boolean def) {
+        super(name, desc);
+        this.value = def;
     }
-
     public boolean getValue() { return value; }
-    public void setValue(boolean value) { this.value = value; }
-    public void toggle() { this.value = !this.value; }
+    public void setValue(boolean v) { this.value = v; }
+    public void toggle() { value = !value; }
 }
