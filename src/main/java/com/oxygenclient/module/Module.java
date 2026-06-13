@@ -1,7 +1,6 @@
 package com.oxygenclient.module;
 
 import com.oxygenclient.module.settings.Setting;
-import com.oxygenclient.ui.NotificationManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ public abstract class Module {
         if (mc.player != null) {
             mc.player.sendMessage(Text.literal((enabled ? "§a✔ " : "§c✘ ") + name + (enabled ? " ON" : " OFF")), true);
         }
-        NotificationManager.getInstance().addNotification(name);
     }
 
     public void addSetting(Setting s) { settings.add(s); }
