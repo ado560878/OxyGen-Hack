@@ -3,8 +3,8 @@ package com.oxygenclient.module.settings;
 public class BooleanSetting extends Setting {
     private boolean enabled;
     
-    public BooleanSetting(String name, String description, boolean defaultValue) {
-        super(name, description);
+    public BooleanSetting(String name, boolean defaultValue) {
+        super(name);
         this.enabled = defaultValue;
     }
     
