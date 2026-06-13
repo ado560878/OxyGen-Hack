@@ -13,7 +13,7 @@ dependencies {
     minecraft "com.mojang:minecraft:1.21.4"
     mappings "net.fabricmc:yarn:1.21.4+build.1:v2"
     modImplementation "net.fabricmc:fabric-loader:0.16.9"
-    // Fabric API yok - sadece loader
+    // Fabric API yok - tamamen bağımsız
 }
 
 loom {
