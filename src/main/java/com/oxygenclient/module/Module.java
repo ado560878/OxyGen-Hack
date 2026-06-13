@@ -29,7 +29,7 @@ public abstract class Module {
         if (mc.player != null) {
             mc.player.sendMessage(Text.literal((enabled ? "§a✔ " : "§c✘ ") + name + (enabled ? " ON" : " OFF")), true);
         }
-        NotificationManager.getInstance().addNotification(name, enabled);
+        NotificationManager.getInstance().addNotification(name);
     }
 
     public void addSetting(Setting s) { settings.add(s); }
