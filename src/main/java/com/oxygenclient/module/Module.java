@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Module {
-    private String name;
-    private String description;
-    private Category category;
-    private boolean enabled;
-    private int key;
-    private List<Setting> settings = new ArrayList<>();
+    protected String name;
+    protected String description;
+    protected Category category;
+    protected boolean enabled;
+    protected int key;
+    protected List<Setting> settings = new ArrayList<>();
     
     protected static MinecraftClient mc = MinecraftClient.getInstance();
     
@@ -34,12 +34,6 @@ public class Module {
         settings.add(setting);
     }
     
-    public void addSettings(Setting... settings) {
-        for (Setting setting : settings) {
-            this.settings.add(setting);
-        }
-    }
-    
     public void toggle() {
         this.enabled = !this.enabled;
         if (enabled) onEnable();
@@ -51,6 +45,12 @@ public class Module {
     public void onTick() {}
     
     public String getDisplayValue() {
+        // KillAura için range değerini göster
+        for (Setting setting : settings) {
+            if (setting.getName().equals("Range") && setting instanceof com.oxygenclient.module.settings.NumberSetting) {
+                return "§7" + ((com.oxygenclient.module.settings.NumberSetting) setting).getValue();
+            }
+        }
         return null;
     }
 }
