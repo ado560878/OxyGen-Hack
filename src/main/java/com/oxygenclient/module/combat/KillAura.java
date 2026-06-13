@@ -5,14 +5,13 @@ import com.oxygenclient.module.Module;
 import com.oxygenclient.module.settings.ModeSetting;
 import com.oxygenclient.module.settings.NumberSetting;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 
 public class KillAura extends Module {
     
     public NumberSetting range = new NumberSetting("Range", "Attack range", 4.5, 2.0, 6.0, 0.1);
     public NumberSetting cps = new NumberSetting("CPS", "Clicks per second", 10, 1, 20, 1);
-    public ModeSetting priority = new ModeSetting("Priority", "Distance", "Distance", "Health", "Angle");
+    public ModeSetting priority = new ModeSetting("Priority", "Target priority", "Distance", "Distance", "Health", "Angle");
     
     private long lastAttack = 0;
     
