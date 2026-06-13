@@ -20,7 +20,7 @@ public class Notification {
 
     public boolean isExpired() { return System.currentTimeMillis() - start > duration + 600; }
 
-    public void render(DrawContext ctx) {
+    public void render(DrawContext ctx, int yOffset) {
         long elapsed = System.currentTimeMillis() - start;
         float targetX = 10;
         
@@ -39,10 +39,11 @@ public class Notification {
             alpha = 1;
         }
 
-        int ix = (int)x, iy = 5;
+        int ix = (int)x, iy = yOffset;
         int w = 130, h = 20;
         
         ctx.fill(ix, iy, ix+w, iy+h, 0xCC9932CC);
+        ctx.fill(ix, iy, ix+w, iy+2, 0xFFFF69B4);
         ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer,
             Text.literal(text), ix+5, iy+6, 0xFFFFFF);
     }
