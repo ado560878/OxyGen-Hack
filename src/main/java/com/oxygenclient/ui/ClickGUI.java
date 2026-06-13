@@ -22,7 +22,7 @@ public class ClickGUI extends Screen {
     private List<Panel> panels = new ArrayList<>();
     private Module selectedModule = null;
     private boolean bindingKey = false;
-    private Setting slidingSetting = null;
+    private NumberSetting slidingSetting = null;
     private int sliderX, sliderWidth;
     
     public ClickGUI() {
@@ -69,14 +69,13 @@ public class ClickGUI extends Screen {
     
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (slidingSetting != null && slidingSetting instanceof NumberSetting) {
-            NumberSetting num = (NumberSetting) slidingSetting;
+        if (slidingSetting != null) {
             double percent = (mouseX - sliderX) / (double) sliderWidth;
             percent = Math.max(0, Math.min(1, percent));
-            double value = num.getMin() + (num.getMax() - num.getMin()) * percent;
-            value = Math.round(value / num.getIncrement()) * num.getIncrement();
-            value = Math.max(num.getMin(), Math.min(num.getMax(), value));
-            num.setValue(value);
+            double value = slidingSetting.getMin() + (slidingSetting.getMax() - slidingSetting.getMin()) * percent;
+            value = Math.round(value / slidingSetting.getIncrement()) * slidingSetting.getIncrement();
+            value = Math.max(slidingSetting.getMin(), Math.min(slidingSetting.getMax(), value));
+            slidingSetting.setValue(value);
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -197,9 +196,9 @@ public class ClickGUI extends Screen {
                     int statusX = menuX + menuWidth - tr.getWidth(status) - 10;
                     context.drawText(tr, status, statusX, currentY + 2, color, true);
                     
-                    if (mouseX > statusX - 5 && mouseX < statusX + tr.getWidth(status) + 5 && 
-                        mouseY > currentY && mouseY < currentY + 12 && 
-                        MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
+                    if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked() &&
+                        mouseX > statusX - 5 && mouseX < statusX + tr.getWidth(status) + 5 && 
+                        mouseY > currentY && mouseY < currentY + 12) {
                         bool.toggle();
                         NotificationManager.add(setting.getName() + " → " + (bool.isEnabled() ? "ON" : "OFF"), 1000);
                     }
@@ -218,18 +217,12 @@ public class ClickGUI extends Screen {
                     context.fill(sliderXPos, sliderYPos, sliderXPos + progress, sliderYPos + 4, 0xFFD46BFF);
                     context.fill(sliderXPos + progress - 2, sliderYPos - 2, sliderXPos + progress + 2, sliderYPos + 6, 0xFFFFFFFF);
                     
-                    if (mouseX > sliderXPos && mouseX < sliderXPos + sliderW && 
-                        mouseY > sliderYPos - 2 && mouseY < sliderYPos + 6 && 
-                        MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
-                        slidingSetting = setting;
+                    if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked() &&
+                        mouseX > sliderXPos && mouseX < sliderXPos + sliderW && 
+                        mouseY > sliderYPos - 2 && mouseY < sliderYPos + 6) {
+                        slidingSetting = num;
                         sliderX = sliderXPos;
                         sliderWidth = sliderW;
-                        double percent = (mouseX - sliderXPos) / (double) sliderW;
-                        percent = Math.max(0, Math.min(1, percent));
-                        double value = num.getMin() + (num.getMax() - num.getMin()) * percent;
-                        value = Math.round(value / num.getIncrement()) * num.getIncrement();
-                        value = Math.max(num.getMin(), Math.min(num.getMax(), value));
-                        num.setValue(value);
                     }
                 }
                 else if (setting instanceof ModeSetting) {
@@ -269,8 +262,8 @@ public class ClickGUI extends Screen {
             context.fill(btnX, btnY, btnX + btnW, btnY + btnH, 0xFFD46BFF);
             context.drawText(tr, "CHANGE", btnX + 8, btnY + 4, 0xFF000000, true);
             
-            if (mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH && 
-                MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
+            if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked() &&
+                mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH) {
                 bindingKey = true;
                 selectedModule = module;
             }
@@ -300,12 +293,12 @@ public class ClickGUI extends Screen {
                 int btnH = 18;
                 
                 if (mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH) {
-                    if (button == 0) { // LEFT CLICK -> Toggle
+                    if (button == 0) {
                         module.toggle();
                         NotificationManager.add(module.getName() + " " + (module.isEnabled() ? "ENABLED" : "DISABLED"), 1000);
                         return true;
                     } 
-                    else if (button == 1) { // RIGHT CLICK -> Open settings
+                    else if (button == 1) {
                         if (selectedModule == module) {
                             selectedModule = null;
                         } else {
