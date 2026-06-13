@@ -1,6 +1,12 @@
 {
   "required": true,
   "package": "com.oxygenclient.mixin",
-  "client": ["MinecraftClientMixin"],
-  "injectors": { "defaultRequire": 1 }
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
