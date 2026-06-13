@@ -45,7 +45,6 @@ public class Module {
     public void onTick() {}
     
     public String getDisplayValue() {
-        // KillAura için range değerini göster
         for (Setting setting : settings) {
             if (setting.getName().equals("Range") && setting instanceof com.oxygenclient.module.settings.NumberSetting) {
                 return "§7" + ((com.oxygenclient.module.settings.NumberSetting) setting).getValue();
