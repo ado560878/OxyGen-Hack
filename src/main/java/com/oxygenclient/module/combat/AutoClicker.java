@@ -3,26 +3,31 @@ package com.oxygenclient.module.combat;
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
 import com.oxygenclient.module.settings.NumberSetting;
-import net.minecraft.util.Hand;
 
 public class AutoClicker extends Module {
-    private final NumberSetting cps = new NumberSetting("CPS", "Clicks per second", 10, 1, 20, 1);
-    private int tick = 0;
-
+    private NumberSetting cps = new NumberSetting("CPS", "Clicks per second", 10, 1, 20, 1);
+    private long lastClick = 0;
+    
     public AutoClicker() {
-        super("AutoClicker", "Auto left click", Category.COMBAT);
+        super("AutoClicker", "Automatically clicks", Category.COMBAT);
         addSetting(cps);
     }
-
+    
     @Override
     public void onTick() {
-        if (mc.player == null || mc.currentScreen != null) return;
-        tick++;
-        int delay = Math.max(1, 20 / (int)cps.getValue());
-        if (tick >= delay && mc.options.attackKey.isPressed()) {
-            mc.interactionManager.attackEntity(mc.player, mc.player);
-            mc.player.swingHand(Hand.MAIN_HAND);
-            tick = 0;
+        if (mc.player == null) return;
+        
+        long now = System.currentTimeMillis();
+        int delay = (int) (1000.0 / cps.getValue());
+        
+        if (now - lastClick >= delay) {
+            mc.options.attackKey.setPressed(true);
+            lastClick = now;
         }
+    }
+    
+    @Override
+    public void onDisable() {
+        mc.options.attackKey.setPressed(false);
     }
 }
