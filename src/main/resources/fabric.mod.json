@@ -5,9 +5,6 @@
   "name": "OxyGen Client",
   "description": "Advanced Ghost Client for Minecraft",
   "authors": ["OxyGen Team"],
-  "contact": {},
-  "license": "All Rights Reserved",
-  "icon": "assets/oxygenclient/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
