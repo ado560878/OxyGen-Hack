@@ -14,12 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockRenderManager.class)
 public class BlockRenderMixin {
+    
     @Inject(method = "renderBlock", at = @At("HEAD"), cancellable = true)
-    private void onRender(BlockState s, BlockPos p, BlockRenderView w, MatrixStack m, 
-                           VertexConsumerProvider v, boolean c, 
-                           net.minecraft.util.math.random.Random r, CallbackInfo ci) {
-        if (XRay.enabled && !XRay.BLOCKS.contains(s.getBlock())) {
-            ci.cancel();
+    private void onRenderBlock(BlockState state, BlockPos pos, BlockRenderView world, MatrixStack matrices, 
+                               VertexConsumerProvider vertexConsumers, boolean cull, CallbackInfo ci) {
+        if (XRay.isEnabled()) {
+            String name = state.getBlock().getName().getString().toLowerCase();
+            if (!name.contains("ore") && !name.contains("quartz") && !name.contains("ancient_debris")) {
+                ci.cancel();
+            }
         }
     }
 }
