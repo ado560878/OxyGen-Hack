@@ -18,7 +18,8 @@ public class BlockRenderMixin {
     @Inject(method = "renderBlock", at = @At("HEAD"), cancellable = true)
     private void onRenderBlock(BlockState state, BlockPos pos, BlockRenderView world, MatrixStack matrices, 
                                VertexConsumerProvider vertexConsumers, boolean cull, CallbackInfo ci) {
-        if (XRay.isEnabled()) {
+        XRay module = XRay.getInstance();
+        if (module != null && module.isEnabled()) {
             String name = state.getBlock().getName().getString().toLowerCase();
             if (!name.contains("ore") && !name.contains("quartz") && !name.contains("ancient_debris")) {
                 ci.cancel();
