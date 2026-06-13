@@ -10,17 +10,17 @@ import net.minecraft.util.Hand;
 
 public class KillAura extends Module {
     
-    public NumberSetting range = new NumberSetting("Range", 4.5, 2.0, 6.0, 0.1);
-    public NumberSetting cps = new NumberSetting("CPS", 10, 1, 20, 1);
+    public NumberSetting range = new NumberSetting("Range", "Attack range", 4.5, 2.0, 6.0, 0.1);
+    public NumberSetting cps = new NumberSetting("CPS", "Clicks per second", 10, 1, 20, 1);
     public ModeSetting priority = new ModeSetting("Priority", "Distance", "Distance", "Health", "Angle");
     
     private long lastAttack = 0;
     
     public KillAura() {
         super("KillAura", "Automatically attacks entities", Category.COMBAT);
-        settings.add(range);
-        settings.add(cps);
-        settings.add(priority);
+        addSetting(range);
+        addSetting(cps);
+        addSetting(priority);
     }
     
     @Override
@@ -46,7 +46,7 @@ public class KillAura extends Module {
         
         for (LivingEntity entity : mc.world.getEntitiesByClass(LivingEntity.class, 
                 mc.player.getBoundingBox().expand(range.getValue()), 
-                e -> e != mc.player && e.isAlive() && !(e instanceof PlayerEntity && ((PlayerEntity)e).isCreative()))) {
+                e -> e != mc.player && e.isAlive())) {
             
             double dist = mc.player.distanceTo(entity);
             if (dist < minDist) {
