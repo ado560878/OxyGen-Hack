@@ -38,7 +38,7 @@ public class BlockRenderMixin {
     private void renderBlock(BlockState state, BlockPos pos, BlockRenderView world, MatrixStack matrices,
                              VertexConsumerProvider vertexConsumers, boolean cull, CallbackInfo ci) {
         
-        if (XRay.isEnabled() && !ORES.contains(state.getBlock())) {
+        if (XRay.isXRayActive() && !ORES.contains(state.getBlock())) {
             ci.cancel();
         }
     }
