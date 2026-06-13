@@ -19,15 +19,15 @@ public class OxygenClient implements ModInitializer {
     public void onInitialize() {
         ModuleManager.init();
         
-        openClickGui = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        openClickGui = new KeyBinding(
             "key.oxygen.openclickgui",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_RIGHT_SHIFT,
             "OxyGen Client"
-        ));
+        );
         
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (openClickGui.wasPressed()) {
+            while (openClickGui.wasPressed()) {
                 client.setScreen(ClickGUI.INSTANCE);
             }
         });
