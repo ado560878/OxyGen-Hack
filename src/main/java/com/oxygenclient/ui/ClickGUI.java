@@ -10,6 +10,7 @@ import com.oxygenclient.module.settings.Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -22,10 +23,10 @@ public class ClickGUI extends Screen {
     private Module selectedModule = null;
     private boolean bindingKey = false;
     private Setting slidingSetting = null;
-    private boolean mousePressed = false;
+    private int sliderX, sliderWidth;
     
     public ClickGUI() {
-        super(java.net.URI.create(""));
+        super(Text.literal("ClickGUI"));
         
         int x = 10;
         for (Category category : Category.values()) {
@@ -36,15 +37,12 @@ public class ClickGUI extends Screen {
     
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Arka plan
         context.fill(0, 0, width, height, 0xAA000000);
         
-        // Panelleri çiz
         for (Panel panel : panels) {
-            panel.render(context, mouseX, mouseY, this);
+            panel.render(context, mouseX, mouseY);
         }
         
-        // Keybind bekleme mesajı
         if (bindingKey && selectedModule != null) {
             String msg = "Press a key for " + selectedModule.getName() + "... (ESC to clear)";
             int msgWidth = textRenderer.getWidth(msg);
@@ -57,16 +55,12 @@ public class ClickGUI extends Screen {
     
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        mousePressed = true;
-        slidingSetting = null;
-        
         for (Panel panel : panels) {
-            if (panel.mouseClicked(mouseX, mouseY, button, this)) {
+            if (panel.mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }
         }
         
-        // Menü dışına tıklanırsa seçili modülü kapat
         if (selectedModule != null && !bindingKey) {
             selectedModule = null;
         }
@@ -74,17 +68,10 @@ public class ClickGUI extends Screen {
     }
     
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        mousePressed = false;
-        slidingSetting = null;
-        return super.mouseReleased(mouseX, mouseY, button);
-    }
-    
-    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (slidingSetting != null && slidingSetting instanceof NumberSetting) {
             NumberSetting num = (NumberSetting) slidingSetting;
-            double percent = (mouseX - (sliderX + 5)) / sliderWidth;
+            double percent = (mouseX - sliderX) / (double) sliderWidth;
             percent = Math.max(0, Math.min(1, percent));
             double value = num.getMin() + (num.getMax() - num.getMin()) * percent;
             value = Math.round(value / num.getIncrement()) * num.getIncrement();
@@ -96,16 +83,22 @@ public class ClickGUI extends Screen {
     }
     
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        slidingSetting = null;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+    
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (bindingKey) {
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
                 selectedModule.setKey(0);
-                NotificationManager.add(new Notification("§b" + selectedModule.getName() + " §7→ Key Unbound", 1500));
+                NotificationManager.add(selectedModule.getName() + " → Key Unbound", 1500);
             } else {
                 selectedModule.setKey(keyCode);
                 String keyName = GLFW.glfwGetKeyName(keyCode, scanCode);
                 if (keyName == null) keyName = "KEY_" + keyCode;
-                NotificationManager.add(new Notification("§b" + selectedModule.getName() + " §7→ §d" + keyName, 1500));
+                NotificationManager.add(selectedModule.getName() + " → " + keyName, 1500);
             }
             bindingKey = false;
             selectedModule = null;
@@ -136,9 +129,6 @@ public class ClickGUI extends Screen {
     class Panel {
         private Category category;
         private int x, y, width, height;
-        private int scrollY = 0;
-        private int expandedModuleY = -1;
-        private Module expandedModule = null;
         
         public Panel(Category category, int x, int y, int width, int height) {
             this.category = category;
@@ -148,76 +138,58 @@ public class ClickGUI extends Screen {
             this.height = height;
         }
         
-        public void render(DrawContext context, int mouseX, int mouseY, ClickGUI gui) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            var tr = mc.textRenderer;
+        public void render(DrawContext context, int mouseX, int mouseY) {
+            var tr = MinecraftClient.getInstance().textRenderer;
             
-            // Başlık
             context.fill(x, y, x + width, y + 18, 0xFF1a1a1a);
             context.fill(x, y, x + width, y + 2, 0xFFD46BFF);
             context.drawText(tr, category.name(), x + 5, y + 5, 0xFFD46BFF, true);
             
-            // İçerik
             context.fill(x, y + 18, x + width, y + height, 0xCC111111);
             
             List<Module> modules = ModuleManager.getModulesInCategory(category);
-            int moduleY = y + 22 - scrollY;
+            int moduleY = y + 22;
             
             for (Module module : modules) {
-                // Modül butonu
-                boolean isExpanded = (gui.selectedModule == module);
+                boolean isExpanded = (selectedModule == module);
                 int btnColor = module.isEnabled() ? 0xFFD46BFF : 0xFF333333;
                 context.fill(x + 3, moduleY, x + width - 3, moduleY + 18, btnColor);
                 
-                // İsim
                 context.drawText(tr, module.getName(), x + 7, moduleY + 5, 0xFFFFFFFF, true);
                 
-                // Değer varsa göster (KillAura range vb)
                 String displayValue = module.getDisplayValue();
-                if (displayValue != null && !displayValue.isEmpty()) {
-                    context.drawText(tr, "§7" + displayValue, x + width - tr.getWidth(" " + displayValue) - 10, moduleY + 5, 0xFFAAAAAA, false);
+                if (displayValue != null) {
+                    context.drawText(tr, displayValue, x + width - tr.getWidth(displayValue) - 10, moduleY + 5, 0xFFAAAAAA, true);
                 }
                 
-                // Ayarları varsa "▼" göster
                 if (!module.getSettings().isEmpty()) {
                     context.drawText(tr, "▼", x + width - 15, moduleY + 5, 0xFFD46BFF, true);
                 }
                 
-                // EXPANDED MENU (sağ tık ile açılan ayar menüsü)
-                if (isExpanded && !gui.bindingKey) {
-                    renderSettingsMenu(context, module, x + width + 5, moduleY, mouseX, mouseY, gui);
+                if (isExpanded && !bindingKey) {
+                    renderSettingsMenu(context, module, x + width + 5, moduleY, mouseX, mouseY);
                 }
                 
                 moduleY += 22;
             }
-            
-            height = Math.min(260, (modules.size() * 22) + 25);
         }
         
-        private int sliderX, sliderWidth; // Drag için global
-        
-        private void renderSettingsMenu(DrawContext context, Module module, int menuX, int menuY, int mouseX, int mouseY, ClickGUI gui) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            var tr = mc.textRenderer;
+        private void renderSettingsMenu(DrawContext context, Module module, int menuX, int menuY, int mouseX, int mouseY) {
+            var tr = MinecraftClient.getInstance().textRenderer;
             List<Setting> settings = module.getSettings();
             
             int menuWidth = 140;
             int menuHeight = 20 + (settings.size() * 32) + 35;
             
-            // Menü arka planı
             context.fill(menuX, menuY, menuX + menuWidth, menuY + menuHeight, 0xDD111111);
             context.fill(menuX, menuY, menuX + menuWidth, menuY + 2, 0xFFD46BFF);
-            
-            // Başlık
             context.drawText(tr, "§l" + module.getName() + " Settings", menuX + 5, menuY + 6, 0xFFD46BFF, true);
             
             int currentY = menuY + 22;
             
-            // Settings
             for (Setting setting : settings) {
                 context.drawText(tr, setting.getName(), menuX + 8, currentY + 2, 0xFFCCCCCC, true);
                 
-                // BOOLEAN SETTING
                 if (setting instanceof BooleanSetting) {
                     BooleanSetting bool = (BooleanSetting) setting;
                     String status = bool.isEnabled() ? "ON" : "OFF";
@@ -225,21 +197,18 @@ public class ClickGUI extends Screen {
                     int statusX = menuX + menuWidth - tr.getWidth(status) - 10;
                     context.drawText(tr, status, statusX, currentY + 2, color, true);
                     
-                    if (gui.mousePressed && isHovering(mouseX, mouseY, statusX - 5, currentY, tr.getWidth(status) + 10, 12)) {
+                    if (mouseX > statusX - 5 && mouseX < statusX + tr.getWidth(status) + 5 && 
+                        mouseY > currentY && mouseY < currentY + 12 && 
+                        MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
                         bool.toggle();
-                        NotificationManager.add(new Notification("§b" + setting.getName() + " §7→ " + (bool.isEnabled() ? "§aON" : "§cOFF"), 1000));
-                        try { Thread.sleep(100); } catch(Exception e) {}
+                        NotificationManager.add(setting.getName() + " → " + (bool.isEnabled() ? "ON" : "OFF"), 1000);
                     }
                 }
-                // NUMBER SETTING (SLIDER)
                 else if (setting instanceof NumberSetting) {
                     NumberSetting num = (NumberSetting) setting;
-                    
-                    // Değer
                     String valueStr = String.valueOf(num.getValue());
                     context.drawText(tr, "§d" + valueStr, menuX + menuWidth - tr.getWidth(valueStr) - 10, currentY + 2, 0xFFD46BFF, true);
                     
-                    // Slider
                     int sliderXPos = menuX + 8;
                     int sliderYPos = currentY + 14;
                     int sliderW = menuWidth - 16;
@@ -247,15 +216,14 @@ public class ClickGUI extends Screen {
                     
                     context.fill(sliderXPos, sliderYPos, sliderXPos + sliderW, sliderYPos + 4, 0xFF333333);
                     context.fill(sliderXPos, sliderYPos, sliderXPos + progress, sliderYPos + 4, 0xFFD46BFF);
-                    
-                    // Slider knob
                     context.fill(sliderXPos + progress - 2, sliderYPos - 2, sliderXPos + progress + 2, sliderYPos + 6, 0xFFFFFFFF);
                     
-                    // Slider drag
-                    if (gui.mousePressed && isHovering(mouseX, mouseY, sliderXPos, sliderYPos - 2, sliderW, 8)) {
-                        gui.slidingSetting = setting;
-                        gui.sliderX = sliderXPos;
-                        gui.sliderWidth = sliderW;
+                    if (mouseX > sliderXPos && mouseX < sliderXPos + sliderW && 
+                        mouseY > sliderYPos - 2 && mouseY < sliderYPos + 6 && 
+                        MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
+                        slidingSetting = setting;
+                        sliderX = sliderXPos;
+                        sliderWidth = sliderW;
                         double percent = (mouseX - sliderXPos) / (double) sliderW;
                         percent = Math.max(0, Math.min(1, percent));
                         double value = num.getMin() + (num.getMax() - num.getMin()) * percent;
@@ -264,28 +232,24 @@ public class ClickGUI extends Screen {
                         num.setValue(value);
                     }
                 }
-                // MODE SETTING
                 else if (setting instanceof ModeSetting) {
                     ModeSetting mode = (ModeSetting) setting;
                     String modeText = mode.getMode();
                     
-                    // Sol ok
                     context.drawText(tr, "<", menuX + menuWidth - 35, currentY + 2, 0xFFD46BFF, true);
-                    // Mode adı
                     context.drawText(tr, modeText, menuX + menuWidth - tr.getWidth(modeText) - 15, currentY + 2, 0xFFFFFFFF, true);
-                    // Sağ ok
                     context.drawText(tr, ">", menuX + menuWidth - 12, currentY + 2, 0xFFD46BFF, true);
                     
-                    if (gui.mousePressed) {
-                        // Sol ok
-                        if (isHovering(mouseX, mouseY, menuX + menuWidth - 35, currentY, 10, 12)) {
+                    if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
+                        if (mouseX > menuX + menuWidth - 35 && mouseX < menuX + menuWidth - 25 && 
+                            mouseY > currentY && mouseY < currentY + 12) {
                             mode.prevMode();
-                            NotificationManager.add(new Notification("§b" + setting.getName() + " §7→ §d" + mode.getMode(), 1000));
+                            NotificationManager.add(setting.getName() + " → " + mode.getMode(), 1000);
                         }
-                        // Sağ ok
-                        if (isHovering(mouseX, mouseY, menuX + menuWidth - 12, currentY, 10, 12)) {
+                        if (mouseX > menuX + menuWidth - 12 && mouseX < menuX + menuWidth - 2 && 
+                            mouseY > currentY && mouseY < currentY + 12) {
                             mode.nextMode();
-                            NotificationManager.add(new Notification("§b" + setting.getName() + " §7→ §d" + mode.getMode(), 1000));
+                            NotificationManager.add(setting.getName() + " → " + mode.getMode(), 1000);
                         }
                     }
                 }
@@ -293,13 +257,11 @@ public class ClickGUI extends Screen {
                 currentY += 32;
             }
             
-            // KEYBIND BÖLÜMÜ
             context.fill(menuX, currentY - 2, menuX + menuWidth, currentY + 28, 0xFF222222);
             String keyText = module.getKey() == 0 ? "NONE" : getKeyName(module.getKey());
             context.drawText(tr, "§7Keybind:", menuX + 8, currentY + 5, 0xFFAAAAAA, true);
             context.drawText(tr, "§d" + keyText, menuX + menuWidth - tr.getWidth(keyText) - 10, currentY + 5, 0xFFD46BFF, true);
             
-            // Değiştir butonu
             int btnW = 50;
             int btnH = 16;
             int btnX = menuX + menuWidth / 2 - btnW / 2;
@@ -307,9 +269,10 @@ public class ClickGUI extends Screen {
             context.fill(btnX, btnY, btnX + btnW, btnY + btnH, 0xFFD46BFF);
             context.drawText(tr, "CHANGE", btnX + 8, btnY + 4, 0xFF000000, true);
             
-            if (gui.mousePressed && isHovering(mouseX, mouseY, btnX, btnY, btnW, btnH)) {
-                gui.bindingKey = true;
-                gui.selectedModule = module;
+            if (mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH && 
+                MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
+                bindingKey = true;
+                selectedModule = module;
             }
         }
         
@@ -326,13 +289,9 @@ public class ClickGUI extends Screen {
             }
         }
         
-        private boolean isHovering(double mouseX, double mouseY, int x, int y, int w, int h) {
-            return mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h;
-        }
-        
-        public boolean mouseClicked(double mouseX, double mouseY, int button, ClickGUI gui) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             List<Module> modules = ModuleManager.getModulesInCategory(category);
-            int moduleY = y + 22 - scrollY;
+            int moduleY = y + 22;
             
             for (Module module : modules) {
                 int btnX = x + 3;
@@ -341,17 +300,17 @@ public class ClickGUI extends Screen {
                 int btnH = 18;
                 
                 if (mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH) {
-                    if (button == 0) { // SOL TIK -> Aç/Kapa
+                    if (button == 0) { // LEFT CLICK -> Toggle
                         module.toggle();
-                        NotificationManager.add(new Notification("§b" + module.getName() + " §7→ " + (module.isEnabled() ? "§aENABLED" : "§cDISABLED"), 1000));
+                        NotificationManager.add(module.getName() + " " + (module.isEnabled() ? "ENABLED" : "DISABLED"), 1000);
                         return true;
                     } 
-                    else if (button == 1) { // SAĞ TIK -> Ayar menüsünü aç/kapa
-                        if (gui.selectedModule == module) {
-                            gui.selectedModule = null;
+                    else if (button == 1) { // RIGHT CLICK -> Open settings
+                        if (selectedModule == module) {
+                            selectedModule = null;
                         } else {
-                            gui.selectedModule = module;
-                            gui.bindingKey = false;
+                            selectedModule = module;
+                            bindingKey = false;
                         }
                         return true;
                     }
