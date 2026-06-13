@@ -5,84 +5,45 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 public class Notification {
-    private final String message;
-    private long startTime;
-    private final long duration;
-    private float x;
-    private final float targetX;
-    private float alpha;
-    private boolean removing = false;
+    public String text;
+    public long start, duration;
+    public float x, alpha;
+    public boolean removing;
 
-    public Notification(String message, float targetX, long duration) {
-        this.message = message;
-        this.startTime = System.currentTimeMillis();
+    public Notification(String text, long duration) {
+        this.text = text;
         this.duration = duration;
-        this.targetX = targetX;
-        this.x = targetX + 150;
-        this.alpha = 1.0f;
+        this.start = System.currentTimeMillis();
+        this.x = 160;
+        this.alpha = 1;
     }
 
-    public boolean isExpired() {
-        return System.currentTimeMillis() - startTime > duration + 500;
-    }
+    public boolean isExpired() { return System.currentTimeMillis() - start > duration + 600; }
 
-    public void render(DrawContext ctx, float delta) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.player == null) return;
-
-        long elapsed = System.currentTimeMillis() - startTime;
+    public void render(DrawContext ctx) {
+        long elapsed = System.currentTimeMillis() - start;
+        float targetX = 10;
         
-        // Animasyon
-        if (!removing && elapsed < 300) {
-            // Giriş animasyonu
-            float progress = elapsed / 300f;
-            x = targetX + 150 * (1 - progress);
-            alpha = progress;
-        } else if (!removing && elapsed > duration - 300) {
-            // Çıkış animasyonu
+        if (!removing && elapsed < 400) {
+            x = targetX + 160 * (1 - elapsed / 400f);
+            alpha = elapsed / 400f;
+        } else if (!removing && elapsed > duration - 400) {
             removing = true;
-            startTime = System.currentTimeMillis();
-            x = targetX;
-            alpha = 1.0f;
+            start = System.currentTimeMillis();
         } else if (removing) {
-            // Çıkış animasyonu devam
-            float progress = elapsed / 400f;
-            x = targetX + 150 * progress;
-            alpha = 1.0f - progress;
-            if (alpha < 0) alpha = 0;
+            float p = elapsed / 500f;
+            x = targetX + 160 * p;
+            alpha = 1 - p;
         } else {
-            // Sabit
             x = targetX;
-            alpha = 1.0f;
+            alpha = 1;
         }
 
-        int y = 25;
-        int width = 140;
-        int height = 22;
+        int ix = (int)x, iy = 5;
+        int w = 130, h = 20;
         
-        // Pembe-mor gradient arkaplan
-        int color1 = 0xCCFF69B4; // Pembe
-        int color2 = 0xCC9932CC; // Mor
-        
-        ctx.fill((int)x, y, (int)x + width, y + height, color1);
-        ctx.fill((int)x, y + height/2, (int)x + width, y + height, color2);
-        
-        // Kenarlık
-        ctx.drawHorizontalLine((int)x, (int)x + width, y, 0xFFFFB6C1);
-        ctx.drawHorizontalLine((int)x, (int)x + width, y + height, 0xFF8B008B);
-        ctx.drawVerticalLine((int)x, y, y + height, 0xFFFFB6C1);
-        ctx.drawVerticalLine((int)x + width, y, y + height, 0xFF8B008B);
-        
-        // Yazı
-        String text = "§d§l✦ §f" + message;
-        ctx.drawTextWithShadow(mc.textRenderer, Text.literal(text), 
-            (int)x + 5, y + 7, 0xFFFFFF);
-    }
-
-    public void startRemoving() {
-        if (!removing) {
-            removing = true;
-            startTime = System.currentTimeMillis();
-        }
+        ctx.fill(ix, iy, ix+w, iy+h, 0xCC9932CC);
+        ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer,
+            Text.literal(text), ix+5, iy+6, 0xFFFFFF);
     }
 }
