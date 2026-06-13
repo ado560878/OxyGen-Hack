@@ -10,8 +10,6 @@ public class HUD {
     private static final MinecraftClient mc = MinecraftClient.getInstance();
     
     public static void render(DrawContext context) {
-        if (mc.options.debugEnabled) return;
-        
         int y = 5;
         int x = 5;
         
