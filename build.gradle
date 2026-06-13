@@ -10,3 +10,13 @@ dependencies {
     mappings "net.fabricmc:yarn:1.21.4+build.1:v2"
     modImplementation "net.fabricmc:fabric-loader:0.16.9"
 }
+
+processResources {
+    filesMatching("fabric.mod.json") { expand "version": project.version }
+}
+
+tasks.withType(JavaCompile).configureEach { it.options.release = 21 }
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
