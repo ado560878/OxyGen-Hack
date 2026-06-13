@@ -1,31 +1,21 @@
+// XRay.java - Mixinsiz
 package com.oxygenclient.module.render;
 
 import com.oxygenclient.module.Category;
 import com.oxygenclient.module.Module;
 
 public class XRay extends Module {
-    private static XRay instance;
-    
     public XRay() {
-        super("XRay", "See ores through walls", Category.RENDER);
-        instance = this;
-    }
-    
-    public static XRay getInstance() {
-        return instance;
+        super("XRay", "See ores through walls (Use Gamma)", Category.RENDER);
     }
     
     @Override
     public void onEnable() {
-        if (mc.worldRenderer != null) {
-            mc.worldRenderer.reload();
-        }
+        mc.options.getGamma().setValue(100.0);
     }
     
     @Override
     public void onDisable() {
-        if (mc.worldRenderer != null) {
-            mc.worldRenderer.reload();
-        }
+        mc.options.getGamma().setValue(0.0);
     }
 }
