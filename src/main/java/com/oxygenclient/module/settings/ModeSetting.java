@@ -7,8 +7,8 @@ public class ModeSetting extends Setting {
     private int index;
     private List<String> modes;
     
-    public ModeSetting(String name, String defaultValue, String... modes) {
-        super(name);
+    public ModeSetting(String name, String description, String defaultValue, String... modes) {
+        super(name, description);
         this.modes = Arrays.asList(modes);
         this.index = this.modes.indexOf(defaultValue);
         if (this.index == -1) this.index = 0;
