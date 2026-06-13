@@ -12,16 +12,16 @@ public class NotificationManager {
         return instance;
     }
 
-    public void addNotification(String name, boolean on) {
-        list.add(new Notification((on ? "§a✔ " : "§c✘ ") + name + (on ? " ON" : " OFF"), 2000));
+    public void addNotification(String name) {
+        list.add(new Notification(name, 2000));
         if (list.size() > 6) list.remove(0);
     }
 
     public void render(DrawContext ctx) {
         list.removeIf(Notification::isExpired);
-        int yOff = 0;
+        int yOff = 5;
         for (Notification n : list) {
-            n.render(ctx);
+            n.render(ctx, yOff);
             yOff += 22;
         }
     }
