@@ -17,7 +17,6 @@ public class ClickGUI extends Screen {
     private Module selMod = null;
     private Module bindMod = null;
     private int scrollY = 0;
-    private double sliderDrag = -1;
 
     public ClickGUI() { super(Text.literal("OxyGen")); }
 
@@ -44,11 +43,8 @@ public class ClickGUI extends Screen {
             
             final Module mod = m;
             addDrawableChild(ButtonWidget.builder(Text.literal(txt), b -> {
-                if (b == net.minecraft.client.gui.widget.ButtonWidget.class.cast(b) && 
-                    ((ButtonWidget)b).getMessage().getString().contains("...")) return;
                 if (Screen.hasShiftDown()) { bindMod = mod; clearChildren(); init(); return; }
                 if (Screen.hasControlDown()) { selMod = (selMod == mod) ? null : mod; clearChildren(); init(); return; }
-                if (isMouseOverSettings(mx(), my()) && selMod == mod) return;
                 mod.toggle();
                 clearChildren(); init();
             }).dimensions(10, y, 170, 18).build());
@@ -63,87 +59,57 @@ public class ClickGUI extends Screen {
         }
     }
 
-    private int mx() { return (int)(MinecraftClient.getInstance().mouse.getX() * width / MinecraftClient.getInstance().getWindow().getWidth()); }
-    private int my() { return (int)(MinecraftClient.getInstance().mouse.getY() * height / MinecraftClient.getInstance().getWindow().getHeight()); }
-
-    private boolean isMouseOverSettings(int mx, int my) {
-        return mx >= 200 && my >= 55;
-    }
-
     private void renderSettings(int x, int y) {
         // Başlık
-        drawSettingBg(x, y, 180, 16, 0xFF9932CC);
-        MinecraftClient.getInstance().textRenderer.draw(
-            Text.literal("§d✧ " + selMod.name), x + 5, y + 4, 0xFFFFFF, false, 
-            null, null, 0, 0xFFFFFF);
+        ctx().fill(x, y, x + 180, y + 16, 0xFF9932CC);
+        ctx().drawTextWithShadow(textRenderer, Text.literal("§d✧ " + selMod.name), x + 5, y + 4, 0xFFFFFF);
         y += 18;
 
         for (Setting s : selMod.settings) {
             if (s instanceof BooleanSetting bs) {
-                drawSettingBg(x, y, 180, 16, 0x44000000);
-                String t = "§7" + bs.getName() + ": " + (bs.getValue() ? "§a✓" : "§c✗");
-                if (isMouseOver(mx(), my(), x, y, 180, 16)) {
-                    drawSettingBg(x, y, 180, 16, 0x669932CC);
-                    if (hasClicked()) { bs.toggle(); clearChildren(); init(); }
+                ctx().fill(x, y, x + 180, y + 16, 0x44000000);
+                if (mx() >= x && mx() <= x+180 && my() >= y && my() <= y+16) {
+                    ctx().fill(x, y, x + 180, y + 16, 0x669932CC);
                 }
-                MinecraftClient.getInstance().textRenderer.draw(
-                    Text.literal(t), x + 5, y + 4, 0xFFFFFF, false, null, null, 0, 0xFFFFFF);
+                ctx().drawTextWithShadow(textRenderer, 
+                    Text.literal("§7" + bs.getName() + ": " + (bs.getValue() ? "§a✓" : "§c✗")), 
+                    x + 5, y + 4, 0xFFFFFF);
                 y += 18;
             } else if (s instanceof NumberSetting ns) {
-                drawSettingBg(x, y, 180, 30, 0x44000000);
-                MinecraftClient.getInstance().textRenderer.draw(
+                ctx().fill(x, y, x + 180, y + 30, 0x44000000);
+                ctx().drawTextWithShadow(textRenderer, 
                     Text.literal("§7" + ns.getName() + ": §e" + String.format("%.1f", ns.getValue())), 
-                    x + 5, y + 3, 0xFFFFFF, false, null, null, 0, 0xFFFFFF);
+                    x + 5, y + 3, 0xFFFFFF);
                 
-                // Slider
-                int sliderX = x + 5, sliderY = y + 14, sliderW = 170, sliderH = 8;
-                drawSettingBg(sliderX, sliderY, sliderW, sliderH, 0xFF333333);
+                int sx = x + 5, sy = y + 14, sw = 170, sh = 8;
+                ctx().fill(sx, sy, sx + sw, sy + sh, 0xFF333333);
                 double ratio = (ns.getValue() - ns.getMin()) / (ns.getMax() - ns.getMin());
-                int fillW = (int)(sliderW * ratio);
-                drawSettingBg(sliderX, sliderY, fillW, sliderH, 0xFF9932CC);
-                
-                if (isMouseOver(mx(), my(), sliderX, sliderY, sliderW, sliderH)) {
-                    if (org.lwjgl.glfw.GLFW.glfwGetMouseButton(
-                        MinecraftClient.getInstance().getWindow().getHandle(), 0) == 1) {
-                        double newRatio = (double)(mx() - sliderX) / sliderW;
-                        ns.setValue(ns.getMin() + newRatio * (ns.getMax() - ns.getMin()));
-                        clearChildren(); init();
-                    }
-                }
+                ctx().fill(sx, sy, sx + (int)(sw * ratio), sy + sh, 0xFF9932CC);
                 y += 32;
             } else if (s instanceof ModeSetting ms) {
-                drawSettingBg(x, y, 180, 16, 0x44000000);
-                String t = "§7" + ms.getName() + ": §b" + ms.getValue();
-                if (isMouseOver(mx(), my(), x, y, 180, 16)) {
-                    drawSettingBg(x, y, 180, 16, 0x669932CC);
-                    if (hasClicked()) { ms.cycle(); clearChildren(); init(); }
+                ctx().fill(x, y, x + 180, y + 16, 0x44000000);
+                if (mx() >= x && mx() <= x+180 && my() >= y && my() <= y+16) {
+                    ctx().fill(x, y, x + 180, y + 16, 0x669932CC);
                 }
-                MinecraftClient.getInstance().textRenderer.draw(
-                    Text.literal(t), x + 5, y + 4, 0xFFFFFF, false, null, null, 0, 0xFFFFFF);
+                ctx().drawTextWithShadow(textRenderer, 
+                    Text.literal("§7" + ms.getName() + ": §b" + ms.getValue()), 
+                    x + 5, y + 4, 0xFFFFFF);
                 y += 18;
             }
         }
 
         // Keybind
-        drawSettingBg(x, y, 180, 16, 0x44000000);
-        String kb = "§e⌨ Bind: " + (selMod.key != 0 ? "§a" + GLFW.glfwGetKeyName(selMod.key, 0) : "§7None");
-        MinecraftClient.getInstance().textRenderer.draw(
-            Text.literal(kb), x + 5, y + 4, 0xFFFFFF, false, null, null, 0, 0xFFFFFF);
+        ctx().fill(x, y, x + 180, y + 16, 0x44000000);
+        ctx().drawTextWithShadow(textRenderer, 
+            Text.literal("§e⌨ Bind: " + (selMod.key != 0 ? "§a" + GLFW.glfwGetKeyName(selMod.key, 0) : "§7None")), 
+            x + 5, y + 4, 0xFFFFFF);
     }
 
-    private void drawSettingBg(int x, int y, int w, int h, int color) {
-        net.minecraft.client.gui.DrawContext ctx = new net.minecraft.client.gui.DrawContext(
-            MinecraftClient.getInstance(), MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers());
-        ctx.fill(x, y, x + w, y + h, color);
-    }
+    private int mx() { return (int)(MinecraftClient.getInstance().mouse.getX() * width / MinecraftClient.getInstance().getWindow().getWidth()); }
+    private int my() { return (int)(MinecraftClient.getInstance().mouse.getY() * height / MinecraftClient.getInstance().getWindow().getHeight()); }
 
-    private boolean isMouseOver(int mx, int my, int x, int y, int w, int h) {
-        return mx >= x && mx <= x + w && my >= y && my <= y + h;
-    }
-
-    private boolean hasClicked() {
-        return org.lwjgl.glfw.GLFW.glfwGetMouseButton(
-            MinecraftClient.getInstance().getWindow().getHandle(), 0) == 1;
+    private DrawContext ctx() {
+        return new DrawContext(MinecraftClient.getInstance(), MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers());
     }
 
     @Override
@@ -161,7 +127,7 @@ public class ClickGUI extends Screen {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double h, double v) {
-        scrollY += v * 15;
+        scrollY += (int)(v * 15);
         if (scrollY > 0) scrollY = 0;
         clearChildren(); init();
         return true;
@@ -170,7 +136,6 @@ public class ClickGUI extends Screen {
     @Override
     public void render(DrawContext ctx, int mx, int my, float d) {
         ctx.fill(0, 0, width, height, 0xDD0D0015);
-        // Üst bar
         for (int i = 0; i < 22; i++) {
             float r = i / 22f;
             ctx.fill(5, 22 + i, width - 5, 23 + i,
