@@ -1,42 +1,28 @@
 package com.oxygenclient.ui;
 
 import net.minecraft.client.gui.DrawContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class NotificationManager {
     private static NotificationManager instance;
-    private final List<Notification> notifications = new ArrayList<>();
-    private static final int MAX_NOTIFICATIONS = 5;
+    private final List<Notification> list = new ArrayList<>();
 
     public static NotificationManager getInstance() {
         if (instance == null) instance = new NotificationManager();
         return instance;
     }
 
-    public void addNotification(String message) {
-        notifications.add(new Notification(message, 10, 2000));
-        if (notifications.size() > MAX_NOTIFICATIONS) {
-            Notification oldest = notifications.get(0);
-            oldest.startRemoving();
-        }
+    public void addNotification(String name, boolean on) {
+        list.add(new Notification((on ? "§a✔ " : "§c✘ ") + name + (on ? " ON" : " OFF"), 2000));
+        if (list.size() > 6) list.remove(0);
     }
 
-    public void render(DrawContext ctx, float delta) {
-        notifications.removeIf(n -> {
-            if (n.isExpired()) return true;
-            n.render(ctx, delta);
-            return false;
-        });
-        
-        // Her bildirimi aşağı kaydır
-        int yOffset = 0;
-        for (Notification n : notifications) {
-            yOffset += 25;
+    public void render(DrawContext ctx) {
+        list.removeIf(Notification::isExpired);
+        int yOff = 0;
+        for (Notification n : list) {
+            n.render(ctx);
+            yOff += 22;
         }
-    }
-
-    public void clear() {
-        notifications.clear();
     }
 }
