@@ -5,8 +5,6 @@ public enum Category {
     MOVEMENT("Movement"),
     RENDER("Render"),
     WORLD("World");
-
-    private final String name;
-    Category(String n) { name = n; }
-    public String getName() { return name; }
+    public String name;
+    Category(String n) { this.name = n; }
 }
