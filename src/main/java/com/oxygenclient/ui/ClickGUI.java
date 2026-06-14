@@ -37,7 +37,8 @@ public class ClickGUI extends Screen {
     
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.fill(0, 0, width, height, 0xAA000000);
+        // Net arka plan - bulanıklık yok
+        context.fill(0, 0, width, height, 0xDD000000);
         
         for (Panel panel : panels) {
             panel.render(context, mouseX, mouseY);
@@ -47,7 +48,7 @@ public class ClickGUI extends Screen {
             String msg = "Press a key for " + selectedModule.getName() + "... (ESC to clear)";
             int msgWidth = textRenderer.getWidth(msg);
             context.fill(width/2 - msgWidth/2 - 5, height/2 - 12, width/2 + msgWidth/2 + 5, height/2 + 8, 0xCC000000);
-            context.drawText(textRenderer, msg, width/2 - msgWidth/2, height/2 - 5, 0xFFD46BFF, true);
+            context.drawText(textRenderer, msg, width/2 - msgWidth/2, height/2 - 5, 0xFFD46BFF, false);
         }
         
         super.render(context, mouseX, mouseY, delta);
@@ -124,7 +125,6 @@ public class ClickGUI extends Screen {
         return false;
     }
     
-    // PANEL SINIFI
     class Panel {
         private Category category;
         private int x, y, width, height;
@@ -140,10 +140,12 @@ public class ClickGUI extends Screen {
         public void render(DrawContext context, int mouseX, int mouseY) {
             var tr = MinecraftClient.getInstance().textRenderer;
             
+            // Başlık - Net çizim
             context.fill(x, y, x + width, y + 18, 0xFF1a1a1a);
             context.fill(x, y, x + width, y + 2, 0xFFD46BFF);
-            context.drawText(tr, category.name(), x + 5, y + 5, 0xFFD46BFF, true);
+            context.drawText(tr, category.name(), x + 5, y + 5, 0xFFD46BFF, false);
             
+            // İçerik
             context.fill(x, y + 18, x + width, y + height, 0xCC111111);
             
             List<Module> modules = ModuleManager.getModulesInCategory(category);
@@ -154,15 +156,15 @@ public class ClickGUI extends Screen {
                 int btnColor = module.isEnabled() ? 0xFFD46BFF : 0xFF333333;
                 context.fill(x + 3, moduleY, x + width - 3, moduleY + 18, btnColor);
                 
-                context.drawText(tr, module.getName(), x + 7, moduleY + 5, 0xFFFFFFFF, true);
+                context.drawText(tr, module.getName(), x + 7, moduleY + 5, 0xFFFFFFFF, false);
                 
                 String displayValue = module.getDisplayValue();
                 if (displayValue != null) {
-                    context.drawText(tr, displayValue, x + width - tr.getWidth(displayValue) - 10, moduleY + 5, 0xFFAAAAAA, true);
+                    context.drawText(tr, displayValue, x + width - tr.getWidth(displayValue) - 10, moduleY + 5, 0xFFAAAAAA, false);
                 }
                 
                 if (!module.getSettings().isEmpty()) {
-                    context.drawText(tr, "▼", x + width - 15, moduleY + 5, 0xFFD46BFF, true);
+                    context.drawText(tr, "▼", x + width - 15, moduleY + 5, 0xFFD46BFF, false);
                 }
                 
                 if (isExpanded && !bindingKey) {
@@ -182,19 +184,19 @@ public class ClickGUI extends Screen {
             
             context.fill(menuX, menuY, menuX + menuWidth, menuY + menuHeight, 0xDD111111);
             context.fill(menuX, menuY, menuX + menuWidth, menuY + 2, 0xFFD46BFF);
-            context.drawText(tr, "§l" + module.getName() + " Settings", menuX + 5, menuY + 6, 0xFFD46BFF, true);
+            context.drawText(tr, "§l" + module.getName() + " Settings", menuX + 5, menuY + 6, 0xFFD46BFF, false);
             
             int currentY = menuY + 22;
             
             for (Setting setting : settings) {
-                context.drawText(tr, setting.getName(), menuX + 8, currentY + 2, 0xFFCCCCCC, true);
+                context.drawText(tr, setting.getName(), menuX + 8, currentY + 2, 0xFFCCCCCC, false);
                 
                 if (setting instanceof BooleanSetting) {
                     BooleanSetting bool = (BooleanSetting) setting;
                     String status = bool.isEnabled() ? "ON" : "OFF";
                     int color = bool.isEnabled() ? 0xFFD46BFF : 0xFF666666;
                     int statusX = menuX + menuWidth - tr.getWidth(status) - 10;
-                    context.drawText(tr, status, statusX, currentY + 2, color, true);
+                    context.drawText(tr, status, statusX, currentY + 2, color, false);
                     
                     if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked() &&
                         mouseX > statusX - 5 && mouseX < statusX + tr.getWidth(status) + 5 && 
@@ -206,7 +208,7 @@ public class ClickGUI extends Screen {
                 else if (setting instanceof NumberSetting) {
                     NumberSetting num = (NumberSetting) setting;
                     String valueStr = String.valueOf(num.getValue());
-                    context.drawText(tr, "§d" + valueStr, menuX + menuWidth - tr.getWidth(valueStr) - 10, currentY + 2, 0xFFD46BFF, true);
+                    context.drawText(tr, "§d" + valueStr, menuX + menuWidth - tr.getWidth(valueStr) - 10, currentY + 2, 0xFFD46BFF, false);
                     
                     int sliderXPos = menuX + 8;
                     int sliderYPos = currentY + 14;
@@ -229,9 +231,9 @@ public class ClickGUI extends Screen {
                     ModeSetting mode = (ModeSetting) setting;
                     String modeText = mode.getMode();
                     
-                    context.drawText(tr, "<", menuX + menuWidth - 35, currentY + 2, 0xFFD46BFF, true);
-                    context.drawText(tr, modeText, menuX + menuWidth - tr.getWidth(modeText) - 15, currentY + 2, 0xFFFFFFFF, true);
-                    context.drawText(tr, ">", menuX + menuWidth - 12, currentY + 2, 0xFFD46BFF, true);
+                    context.drawText(tr, "<", menuX + menuWidth - 35, currentY + 2, 0xFFD46BFF, false);
+                    context.drawText(tr, modeText, menuX + menuWidth - tr.getWidth(modeText) - 15, currentY + 2, 0xFFFFFFFF, false);
+                    context.drawText(tr, ">", menuX + menuWidth - 12, currentY + 2, 0xFFD46BFF, false);
                     
                     if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
                         if (mouseX > menuX + menuWidth - 35 && mouseX < menuX + menuWidth - 25 && 
@@ -252,15 +254,15 @@ public class ClickGUI extends Screen {
             
             context.fill(menuX, currentY - 2, menuX + menuWidth, currentY + 28, 0xFF222222);
             String keyText = module.getKey() == 0 ? "NONE" : getKeyName(module.getKey());
-            context.drawText(tr, "§7Keybind:", menuX + 8, currentY + 5, 0xFFAAAAAA, true);
-            context.drawText(tr, "§d" + keyText, menuX + menuWidth - tr.getWidth(keyText) - 10, currentY + 5, 0xFFD46BFF, true);
+            context.drawText(tr, "§7Keybind:", menuX + 8, currentY + 5, 0xFFAAAAAA, false);
+            context.drawText(tr, "§d" + keyText, menuX + menuWidth - tr.getWidth(keyText) - 10, currentY + 5, 0xFFD46BFF, false);
             
             int btnW = 50;
             int btnH = 16;
             int btnX = menuX + menuWidth / 2 - btnW / 2;
             int btnY = currentY + 8;
             context.fill(btnX, btnY, btnX + btnW, btnY + btnH, 0xFFD46BFF);
-            context.drawText(tr, "CHANGE", btnX + 8, btnY + 4, 0xFF000000, true);
+            context.drawText(tr, "CHANGE", btnX + 8, btnY + 4, 0xFF000000, false);
             
             if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked() &&
                 mouseX > btnX && mouseX < btnX + btnW && mouseY > btnY && mouseY < btnY + btnH) {
